@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Game, Genre, Review
+from .models import Game, Genre, Review, SteamReview, UserGame
 
-admin.site.register(Game)
 admin.site.register(Genre)
+admin.site.register(Game)
 admin.site.register(Review)
-# Register your models here.
+admin.site.register(SteamReview)
+admin.site.register(UserGame)

@@ -1,21 +1,43 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import generics, permissions
 
-from api.models import Game
-from api.serializers import GameSerializer
+from .models import Game, Review
+from .serializers import GameSerializer, ReviewSerializer
 
 
-@api_view(['GET'])
-def game_list(request):
-    games = Game.objects.all()
-    return Response(GameSerializer(games, many=True).data)
+class GameListView(generics.ListAPIView):
+    queryset = Game.objects.select_related('genre').all()
+    serializer_class = GameSerializer
+    permission_classes = [permissions.AllowAny]
 
 
-@api_view(['GET'])
-def game_detail(request, pk):
-    try:
-        game = Game.objects.get(pk=pk)
-    except Game.DoesNotExist:
-        return Response({'detail': 'Not found.'}, status=404)
-    return Response(GameSerializer(game).data)
+class GameDetailView(generics.RetrieveAPIView):
+    queryset = Game.objects.select_related('genre').all()
+    serializer_class = GameSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class ReviewListCreateView(generics.ListCreateAPIView):
+    serializer_class = ReviewSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def get_queryset(self):
+        return Review.objects.filter(game_id=self.kwargs['game_pk']).select_related('user')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user, game_id=self.kwargs['game_pk'])
+
+
+class ReviewDetailView(generics.RetrieveDestroyAPIView):
+    serializer_class = ReviewSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'DELETE':
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def get_queryset(self):
+        return Review.objects.filter(game_id=self.kwargs['game_pk'])
