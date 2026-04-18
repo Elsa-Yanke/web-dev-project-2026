@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  width: 240px;
+  height: 100vh;
+  background-color: #15151b;
+  border-right: 1px solid #252530;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #6c5ce7;
+  margin-bottom: 40px;
+  padding-left: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: #a0a0a0;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+a:hover {
+  background-color: #252530;
+  color: #eee;
+}
+
+a.active { 
+  background-color: #6c5ce7;
+  color: white;
+  font-weight: bold;
+}

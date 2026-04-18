@@ -1,0 +1,29 @@
+<div class="game-card" [class.is-in]="inLibrary">
+  <div class="game-thumb">
+    <img [src]="game.image || 'assets/placeholder.png'" 
+         (error)="onImgError($event)" 
+         class="game-img">
+    
+    @if (inLibrary) {
+      <div class="badge-in-library">MINE</div>
+    }
+  </div>
+
+  <div class="game-body">
+    <span class="genre-label">{{ game.genre?.name }}</span>
+    <h3 class="game-title">{{ game.title }}</h3>
+    <p class="game-meta">{{ game.release_year }}</p>
+
+    <div class="game-footer">
+      <span class="price-tag">${{ game.price }}</span>
+      
+      <div class="game-actions">
+        @if (inLibrary) {
+          <button class="btn-action btn-remove" (click)="onRemove()">Remove</button>
+        } @else {
+          <button class="btn-action btn-add" (click)="onAdd()">+ Add</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

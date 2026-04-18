@@ -1,0 +1,12 @@
+/* В app.css */
+.app-container {
+  display: flex;
+  height: 100vh;
+  background-color: #0f0f13;
+}
+
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 50px; 
+}

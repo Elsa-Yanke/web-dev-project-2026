@@ -1,0 +1,55 @@
+<div class="page">
+  <div class="hdr">
+    <div>
+      <p class="eyebrow">My Profile</p>
+      <h1 class="ptitle">Library</h1>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab" [class.active]="selectedStatus === 'all'" (click)="setFilter('all')">
+      ◈ All <span class="tc">{{myGames.length}}</span>
+    </button>
+    <button class="tab" [class.active]="selectedStatus === 'playing'" (click)="setFilter('playing')">
+      ▶ Playing <span class="tc">{{countPlaying}}</span>
+    </button>
+    <button class="tab" [class.active]="selectedStatus === 'planned'" (click)="setFilter('planned')">
+      ◷ Planned <span class="tc">{{countPlanned}}</span>
+    </button>
+    <button class="tab" [class.active]="selectedStatus === 'finished'" (click)="setFilter('finished')">
+      ✓ Finished <span class="tc">{{countCompleted}}</span>
+    </button>
+  </nav>
+
+  <div class="game-grid">
+    @for (game of filteredGames; track game.id) {
+      <div class="card">
+        <div class="status-stripe" [attr.data-status]="game.status"></div>
+        
+        <div class="cbody">
+          <div class="ctop">
+            <span class="gbadge">{{ game.genre?.name }}</span>
+            <span class="sbadge" [attr.data-status]="game.status">
+              {{ game.status | uppercase }}
+            </span>
+          </div>
+          <h2 class="ctitle">{{ game.title }}</h2>
+          <div class="cmeta">
+            <span class="cyear">{{ game.release_year }}</span>
+            <span class="cprice">${{ game.price }}</span>
+          </div>
+        </div>
+
+        <div class="cactions">
+          <button class="abtn">Details</button>
+          <select class="sselect" [(ngModel)]="game.status" (change)="updateStatus(game)">
+            <option value="playing">Playing</option>
+            <option value="planned">Planned</option>
+            <option value="finished">Finished</option>
+          </select>
+          <button class="abtn rbtn" (click)="removeGame(game.id)">Remove🗑</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,170 @@
+/* Белое выделение текста */
+::selection {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Контейнер формы */
+.review-form {
+  background: #1a1d26;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Группы ввода */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  color: #a0aec0;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus, .form-textarea:focus {
+  border-color: #6c5ce7;
+}
+
+/* Чекбокс */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #fff;
+}
+
+/* Карточка отзыва */
+.review-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: transform 0.2s;
+}
+
+.review-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Аватар (первые две буквы имени) */
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: #6c5ce7;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.review-user {
+  font-weight: 600;
+  color: #fff;
+}
+
+.review-date {
+  color: #718096;
+  font-size: 0.85rem;
+  margin-left: auto;
+}
+
+.sentiment-icon {
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.review-text {
+  color: #cbd5e0;
+  line-height: 1.6;
+  white-space: pre-wrap; /* Сохраняет переносы строк */
+}
+
+/* Кнопки */
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: #6c5ce7;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #5b4cc4;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+
+.btn-danger {
+  background: rgba(245, 101, 101, 0.1);
+  color: #f56565;
+  border: 1px solid rgba(245, 101, 101, 0.2);
+}
+
+.btn-danger:hover {
+  background: #f56565;
+  color: white;
+}
+
+/* Сообщения об ошибках и успехе */
+.error-msg, .success-msg {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.error-msg { background: rgba(245, 101, 101, 0.1); color: #f56565; }
+.success-msg { background: rgba(72, 187, 120, 0.1); color: #48bb78; }
+
+/* Пустое состояние */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #718096;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}

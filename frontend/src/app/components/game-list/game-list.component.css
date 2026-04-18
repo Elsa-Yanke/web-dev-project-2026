@@ -1,0 +1,58 @@
+.catalog-header {
+  display: flex;
+  align-items: center;
+  gap: 20px; 
+  margin-bottom: 30px;
+}
+
+.search-bar input {
+  background: #1e2129;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 15px;
+  color: white;
+  width: 250px;
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: #718096;
+}
+
+.genre-selector { 
+  display: flex; 
+  gap: 10px; 
+  margin-bottom: 25px; 
+}
+
+.genre-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a0aec0;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.genre-chip:hover { 
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.genre-chip.active {
+  background: #4c51bf; 
+  color: #fff;
+  border-color: #667eea;
+  box-shadow: 0 0 15px rgba(76, 81, 191, 0.4);
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.title {
+  color: rgb(255, 255, 255)
+}
