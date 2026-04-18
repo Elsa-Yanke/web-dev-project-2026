@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from .models import Game, Genre, Review
+from .models import Game, Genre, Review, UserGame
 
 User = get_user_model()
 
@@ -60,3 +60,18 @@ class RegisterSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class UserGameSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    game_id = serializers.IntegerField()
+    status = serializers.ChoiceField(choices=['playing', 'finished', 'planned', 'dropped'])
+    added_at = serializers.DateTimeField(read_only=True)
+
+    def validate_game_id(self, value):
+        if not Game.objects.filter(id=value).exists():
+            raise serializers.ValidationError('Game not found.')
+        return value
+
+    def create(self, validated_data):
+        return UserGame.objects.create(**validated_data)
