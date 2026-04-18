@@ -1,24 +1,25 @@
 <div class="detail-container">
-  @if (game) {
+  @if (game(); as g) {
     <div class="hero">
-      <h1>{{ game.title }}</h1>
-      <span class="genre-tag">{{ game.genre.name }}</span>
+      <p class="hero-eyebrow">✿ Game Details</p>
+      <h1>{{ g.title }}</h1>
+      <span class="genre-tag">{{ g.genre.name }}</span>
     </div>
 
     <div class="content-grid">
       <div class="main-info">
         <section class="card">
           <h3>About Game</h3>
-          <p>{{ game.description }}</p>
+          <p>{{ g.description }}</p>
         </section>
 
         <section class="card ai-card">
           <div class="ai-header">
-            <span class="sparkle">✨</span> 
+            <span class="sparkle">✨</span>
             <h3>AI Summary</h3>
           </div>
           <p class="ai-text">
-            {{ game.ai_summary || 'There are not enough reviews to analyze yet.' }}
+            {{ g.ai_summary || 'There are not enough reviews to analyze yet.' }}
           </p>
         </section>
       </div>
@@ -26,11 +27,11 @@
       <div class="reviews-section">
         <div class="card review-form">
           <h3>Leave feedback</h3>
-          <textarea [(ngModel)]="reviewText" placeholder="What do you think about the game?"></textarea>
-          
+          <textarea [value]="reviewText()" (input)="reviewText.set($any($event.target).value)" placeholder="What do you think about the game?"></textarea>
+
           <div class="form-footer">
             <label class="checkbox-container">
-              <input type="checkbox" [(ngModel)]="isPositive">
+              <input type="checkbox" [checked]="isPositive()" (change)="isPositive.set($any($event.target).checked)">
               recommend
             </label>
             <button class="btn btn-primary" (click)="sendReview()">Send</button>
@@ -39,7 +40,7 @@
 
         <div class="reviews-list">
           <h3>Feedback</h3>
-          @for (rev of reviews; track rev.id) {
+          @for (rev of reviews(); track rev.id) {
             <div class="review-item" [class.pos]="rev.is_positive" [class.neg]="!rev.is_positive">
               <div class="rev-header">
                 <strong>{{ rev.user }}</strong>

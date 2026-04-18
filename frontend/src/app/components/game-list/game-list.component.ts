@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
-import { GameCardComponent } from '../game-card/game-card.component'; 
-import {ReviewComponent} from '../review/review.component'
+import { GameCardComponent } from '../game-card/game-card.component';
+import { ReviewComponent } from '../review/review.component';
 import { Game } from '../../models/game.model';
 
 @Component({
@@ -13,57 +13,57 @@ import { Game } from '../../models/game.model';
   styleUrl: './game-list.component.css'
 })
 export class GameListComponent implements OnInit {
-  games: Game[] = [];
-  genres: string[] = ['All']; 
-  selectedGenre: string = 'All';
-  loading = true;
-  errorMessage = '';
+  games = signal<Game[]>([]);
+  genres = signal<string[]>(['All']);
+  selectedGenre = signal<string>('All');
+  loading = signal(true);
+  errorMessage = signal('');
+
+  filteredGames = computed(() => {
+    const genre = this.selectedGenre();
+    if (genre === 'All') return this.games();
+    return this.games().filter(g => g.genre?.name === genre);
+  });
 
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
     this.loadGames();
-    this.loadGenres(); 
-  }
-
-  loadGenres(): void {
-    this.api.getGenres().subscribe({
-      next: (data: any[]) => {
-        const genreNames = data.map(g => typeof g === 'string' ? g : g.name);
-        this.genres = ['All', ...genreNames];
-      },
-      error: () => console.error('Не удалось загрузить жанры')
-    });
   }
 
   loadGames(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.api.getGames().subscribe({
       next: (data) => {
-        this.games = data;
-        this.loading = false;
+        this.games.set(data);
+        const unique = Array.from(new Set(data.map(g => g.genre?.name).filter(Boolean)));
+        this.genres.set(['All', ...unique]);
+        this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage = 'Failed to load games.';
-        this.loading = false;
+        this.errorMessage.set('Failed to load games. Is the backend running?');
+        this.loading.set(false);
         console.error(err);
       }
     });
   }
 
   setGenre(genre: string): void {
-    this.selectedGenre = genre;
+    this.selectedGenre.set(genre);
   }
 
-  get filteredGames(): Game[] {
-    if (this.selectedGenre === 'All') return this.games;
-    return this.games.filter(game => game.genre?.name === this.selectedGenre);
-  }
-
-  onAddGame(gameId: number): void {
-    this.api.addToLibrary(gameId).subscribe({
-      next: () => console.log('Added to library:', gameId),
-      error: (err) => alert('Login required to add games!')
+  onAddGame(event: { gameId: number; status: string }): void {
+    this.api.addToLibrary(event.gameId, event.status).subscribe({
+      next: () => alert('Game added to library!'),
+      error: (err) => {
+        if (err.status === 401 || err.status === 403) {
+          alert('Login required to add games!');
+        } else if (err.status === 400) {
+          alert(err.error?.detail || 'Game already in library.');
+        } else {
+          alert(`Error ${err.status}: ${err.error?.detail || 'Something went wrong'}`);
+        }
+      }
     });
   }
 

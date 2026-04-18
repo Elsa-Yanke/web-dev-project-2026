@@ -8,10 +8,12 @@ export interface Game {
   title: string;
   description: string;
   release_year: number;
-  price: string; 
-  genre: Genre;  
-  ai_summary: string; 
+  price: string;
+  genre: Genre;
+  ai_summary: string;
   image?: string;
+  steam_app_id?: number;
+  cover_image?: string;
 }
 
 export enum GameStatus {
@@ -21,19 +23,19 @@ export enum GameStatus {
   Dropped = 'dropped'
 }
 
-
 export interface Review {
   id: number;
   game: number;
-  user: string;      
+  user: string;
   text: string;
-  is_positive: boolean; 
+  is_positive: boolean;
   created_at: string;
 }
 
 export interface AuthTokens {
   access: string;
   refresh: string;
+  username?: string;
 }
 
 export interface User {
@@ -44,12 +46,10 @@ export interface User {
   avatar: string;
 }
 
-export interface LibraryGame { 
+/** Library entry returned by GET /api/library/ */
+export interface LibraryEntry {
   id: number;
-  title: string;
-  genre: Genre; 
-  release_year: number;
-  price: number;
+  game: Game;
   status: string;
-  date_added: string;
+  added_at: string;
 }

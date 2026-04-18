@@ -1,27 +1,41 @@
 <div class="game-card" [class.is-in]="inLibrary">
-  <div class="game-thumb">
-    <img [src]="game.image || 'assets/placeholder.png'" 
-         (error)="onImgError($event)" 
-         class="game-img">
-    
-    @if (inLibrary) {
-      <div class="badge-in-library">MINE</div>
-    }
-  </div>
+  <a [routerLink]="['/games', game.id]" class="game-thumb-link">
+    <div class="game-thumb">
+      <img [src]="coverSrc"
+           (error)="onImgError($event)"
+           class="game-img"
+           [alt]="game.title">
+      @if (inLibrary) {
+        <div class="badge-in-library">IN LIBRARY</div>
+      }
+    </div>
+  </a>
 
   <div class="game-body">
     <span class="genre-label">{{ game.genre?.name }}</span>
-    <h3 class="game-title">{{ game.title }}</h3>
+    <a [routerLink]="['/games', game.id]" class="game-title-link">
+      <h3 class="game-title">{{ game.title }}</h3>
+    </a>
     <p class="game-meta">{{ game.release_year }}</p>
 
     <div class="game-footer">
-      <span class="price-tag">${{ game.price }}</span>
-      
+      <span class="price-tag" [class.free]="isFree">{{ displayPrice }}</span>
+
       <div class="game-actions">
         @if (inLibrary) {
           <button class="btn-action btn-remove" (click)="onRemove()">Remove</button>
         } @else {
-          <button class="btn-action btn-add" (click)="onAdd()">+ Add</button>
+          @if (showStatusPicker()) {
+            <select class="status-select" (change)="onStatusSelect($event)">
+              <option value="" disabled selected>Status...</option>
+              <option value="playing">Playing</option>
+              <option value="planned">Planned</option>
+              <option value="finished">Finished</option>
+              <option value="dropped">Dropped</option>
+            </select>
+          } @else {
+            <button class="btn-action btn-add" (click)="toggleStatusPicker()">+ Add</button>
+          }
         }
       </div>
     </div>

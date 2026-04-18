@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Game } from '../../models/game.model';
 
 @Component({
   selector: 'app-game-card',
   standalone: true,
-  imports: [CommonModule], 
+  imports: [CommonModule, RouterLink],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.css',
 })
@@ -13,12 +14,21 @@ export class GameCardComponent {
   @Input() game!: Game;
   @Input() inLibrary = false;
 
-  @Output() add = new EventEmitter<number>();
+  @Output() add = new EventEmitter<{ gameId: number; status: string }>();
   @Output() remove = new EventEmitter<number>();
 
+  showStatusPicker = signal(false);
 
-  onAdd(): void {
-    this.add.emit(this.game.id); 
+  toggleStatusPicker(): void {
+    this.showStatusPicker.set(true);
+  }
+
+  onStatusSelect(event: Event): void {
+    const status = (event.target as HTMLSelectElement).value;
+    if (status) {
+      this.add.emit({ gameId: this.game.id, status });
+      this.showStatusPicker.set(false);
+    }
   }
 
   onRemove(): void {
@@ -26,6 +36,23 @@ export class GameCardComponent {
   }
 
   onImgError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'assets/placeholder.png';
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
+
+  /** Returns the image path: local covers folder if set, otherwise nothing */
+  get coverSrc(): string {
+    if (this.game.cover_image) {
+      return `covers/${this.game.cover_image}`;
+    }
+    return 'placeholder.png';
+  }
+
+  get displayPrice(): string {
+    return Number(this.game.price) === 0 ? 'Free' : `${this.game.price} ₸`;
+  }
+
+  get isFree(): boolean {
+    return Number(this.game.price) === 0;
   }
 }

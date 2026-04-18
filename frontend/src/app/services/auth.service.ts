@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private ACCESS_KEY  = 'jwt_access';
   private REFRESH_KEY = 'jwt_refresh';
+  private USERNAME_KEY = 'username';
 
   constructor(private api: ApiService, private router: Router) {}
 
@@ -15,13 +16,32 @@ export class AuthService {
       tap(tokens => {
         localStorage.setItem(this.ACCESS_KEY,  tokens.access);
         localStorage.setItem(this.REFRESH_KEY, tokens.refresh);
+        // SimpleJWT doesn't return username by default, so we save what was typed
+        localStorage.setItem(this.USERNAME_KEY, username);
+      })
+    );
+  }
+
+  /** Register and auto-login (save tokens immediately). */
+  register(payload: { username: string; email: string; password: string; password2: string }) {
+    return this.api.register(payload).pipe(
+      tap(tokens => {
+        localStorage.setItem(this.ACCESS_KEY,  tokens.access);
+        localStorage.setItem(this.REFRESH_KEY, tokens.refresh);
+        localStorage.setItem(this.USERNAME_KEY, payload.username);
       })
     );
   }
 
   logout(): void {
+    const refresh = this.getRefreshToken();
+    if (refresh) {
+      // Blacklist the refresh token on the server (fire-and-forget)
+      this.api.logout(refresh).subscribe({ error: () => {} });
+    }
     localStorage.removeItem(this.ACCESS_KEY);
     localStorage.removeItem(this.REFRESH_KEY);
+    localStorage.removeItem(this.USERNAME_KEY);
     this.router.navigate(['/login']);
   }
 
@@ -31,6 +51,10 @@ export class AuthService {
 
   getRefreshToken(): string | null {
     return localStorage.getItem(this.REFRESH_KEY);
+  }
+
+  getUsername(): string {
+    return localStorage.getItem(this.USERNAME_KEY) ?? '';
   }
 
   isLoggedIn(): boolean {

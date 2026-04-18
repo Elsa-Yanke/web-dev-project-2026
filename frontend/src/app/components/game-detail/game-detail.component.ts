@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,11 +13,11 @@ import { Game, Review } from '../../models/game.model';
   styleUrl: './game-detail.component.css'
 })
 export class GameDetailComponent implements OnInit {
-  game?: Game;
-  reviews: Review[] = [];
-  
-  reviewText = '';
-  isPositive = true;
+  game = signal<Game | null>(null);
+  reviews = signal<Review[]>([]);
+
+  reviewText = signal('');
+  isPositive = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -32,20 +32,19 @@ export class GameDetailComponent implements OnInit {
   }
 
   loadGameData(id: number): void {
-    this.api.getGame(id).subscribe(data => this.game = data);
-    this.api.getReviews(id).subscribe(data => this.reviews = data);
+    this.api.getGame(id).subscribe(data => this.game.set(data));
+    this.api.getReviews(id).subscribe(data => this.reviews.set(data));
   }
 
   sendReview(): void {
-    if (!this.reviewText.trim() || !this.game) return;
+    const g = this.game();
+    if (!this.reviewText().trim() || !g) return;
 
-    this.api.createReview(this.game.id, this.reviewText, this.isPositive).subscribe({
+    this.api.createReview(g.id, this.reviewText(), this.isPositive()).subscribe({
       next: (newReview) => {
-        this.reviews.unshift(newReview); 
-        this.reviewText = ''; 
-        
-
-        this.loadGameData(this.game!.id);
+        this.reviews.update(list => [newReview, ...list]);
+        this.reviewText.set('');
+        this.loadGameData(g.id);
       },
       error: () => alert('Are you logged in?')
     });

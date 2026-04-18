@@ -1,20 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-import { LibraryGame } from '../../models/game.model';
-
+import { LibraryEntry } from '../../models/game.model';
 
 @Component({
   selector: 'app-library',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './library.component.html',
   styleUrl: './library.component.css'
 })
 export class LibraryComponent implements OnInit {
-  myGames: LibraryGame[] = [];
-  selectedStatus: string = 'all'; 
+  entries = signal<LibraryEntry[]>([]);
+  selectedStatus = signal<string>('all');
+
+  filteredEntries = computed(() => {
+    const status = this.selectedStatus();
+    if (status === 'all') return this.entries();
+    return this.entries().filter(e => e.status === status);
+  });
+
+  countPlaying = computed(() => this.entries().filter(e => e.status === 'playing').length);
+  countPlanned = computed(() => this.entries().filter(e => e.status === 'planned').length);
+  countCompleted = computed(() => this.entries().filter(e => e.status === 'finished').length);
 
   constructor(private api: ApiService) {}
 
@@ -23,38 +33,26 @@ export class LibraryComponent implements OnInit {
   }
 
   loadLibrary(): void {
-    this.api.getGames().subscribe({
-      next: (data: any) => {
-        this.myGames = data;
-      },
+    this.api.getLibrary().subscribe({
+      next: (data) => this.entries.set(data),
       error: (err) => console.error('Loading error:', err)
     });
   }
 
   setFilter(status: string): void {
-    this.selectedStatus = status;
+    this.selectedStatus.set(status);
   }
 
-  get filteredGames() {
-    if (this.selectedStatus === 'all') {
-      return this.myGames;
-    }
-    return this.myGames.filter(game => game.status === this.selectedStatus);
-  }
-
-  updateStatus(game: LibraryGame): void {
-    this.api.updateGameStatus(game.id, game.status).subscribe();
+  updateStatus(entry: LibraryEntry, newStatus: string): void {
+    entry.status = newStatus;
+    this.api.updateGameStatus(entry.id, newStatus).subscribe();
   }
 
   removeGame(id: number): void {
     if (confirm('Delete the game?')) {
       this.api.deleteFromLibrary(id).subscribe({
-        next: () => this.myGames = this.myGames.filter(g => g.id !== id)
+        next: () => this.entries.update(list => list.filter(e => e.id !== id))
       });
     }
   }
-
-  get countPlaying() { return this.myGames.filter(g => g.status === 'playing').length; }
-  get countPlanned() { return this.myGames.filter(g => g.status === 'planned').length; }
-  get countCompleted() { return this.myGames.filter(g => g.status === 'finished').length; }
 }

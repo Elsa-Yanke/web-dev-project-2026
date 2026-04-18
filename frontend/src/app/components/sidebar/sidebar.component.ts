@@ -11,13 +11,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
-  constructor(public authService: AuthService) {}
+  constructor(public auth: AuthService) {}
 
   get username(): string {
-    return localStorage.getItem('username') ?? 'User';
+    return this.auth.getUsername() || 'User';
   }
 
   logout(): void {
-    this.authService.logout();
+    this.auth.logout();
   }
 }

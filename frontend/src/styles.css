@@ -1,13 +1,134 @@
+/* ─── Global Reset & Base ─────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --sky-deep:     #090b20;
+  --sky-mid:      #0f1235;
+  --sky-light:    #1a1650;
+  --sakura-light: #f7cfe0;
+  --sakura:       #e8a0c4;
+  --sakura-deep:  #c9678a;
+  --moon:         #f5e199;
+  --moon-glow:    rgba(245, 225, 130, 0.18);
+  --lavender:     #b8a9e8;
+  --lavender-dim: #7b6fb5;
+  --text-bright:  #f0edf8;
+  --text-soft:    #c3b9e0;
+  --text-muted:   #8279aa;
+  --card-bg:      rgba(14, 16, 46, 0.82);
+  --card-border:  rgba(200, 175, 240, 0.12);
+  --card-hover:   rgba(200, 175, 240, 0.2);
+  --glass:        rgba(255, 255, 255, 0.04);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--text-bright);
+  background-color: var(--sky-deep);
+  overflow: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(184, 169, 232, 0.25); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--lavender-dim); }
+
+/* ─── App Shell ─────────────────────────────────────────── */
 .app-container {
-  display: flex;       
-  height: 100vh;       
+  display: flex;
+  height: 100vh;
   width: 100%;
-  overflow: hidden;  
-  background-color: #0f0f13; 
+  overflow: hidden;
+
+  /* Night sky background with moon glow */
+  background:
+    radial-gradient(ellipse 500px 400px at 72% 8%, var(--moon-glow) 0%, transparent 70%),
+    linear-gradient(160deg, #0d0f30 0%, #130e35 40%, #0a0d24 100%);
 }
 
 .main-content {
-  flex-grow: 1;        
-  overflow-y: auto;    
-  padding: 40px;       
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 36px 44px;
+  position: relative;
 }
+
+/* Subtle sakura petals in the background via pseudo-element */
+.main-content::before {
+  content: '❀ ✿ ❀ ✿ ❀';
+  position: fixed;
+  top: 12px;
+  right: 48px;
+  font-size: 11px;
+  letter-spacing: 8px;
+  color: rgba(232, 160, 196, 0.18);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Typography helpers ─────────────────────────────────── */
+h1, h2, h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.25;
+}
+
+/* ─── Shared card ────────────────────────────────────────── */
+.cozy-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.cozy-card:hover {
+  border-color: var(--card-hover);
+  box-shadow: 0 8px 32px rgba(128, 90, 180, 0.15);
+}
+
+/* ─── Shared button ──────────────────────────────────────── */
+.btn-sakura {
+  background: linear-gradient(135deg, #c9678a, #e8a0c4);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btn-sakura:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.btn-ghost {
+  background: var(--glass);
+  color: var(--text-soft);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: var(--lavender-dim);
+}
+
+/* ─── Status colour tokens ───────────────────────────────── */
+[data-status="playing"]  { --s-color: #78d2a8; }
+[data-status="finished"] { --s-color: #a0c4f7; }
+[data-status="planned"]  { --s-color: #e8c96a; }
+[data-status="dropped"]  { --s-color: #d47a7a; }

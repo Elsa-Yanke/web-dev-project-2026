@@ -6,7 +6,9 @@ import { catchError, throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getAccessToken();
-  const isAuthRequest = req.url.includes('/auth/login/') || req.url.includes('/auth/register/');
+  const isAuthRequest = req.url.includes('/auth/login/')
+                     || req.url.includes('/auth/register/')
+                     || req.url.includes('/auth/logout/');
 
   let authReq = req;
 
@@ -20,7 +22,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      // Only auto-logout if the token itself is invalid/expired,
+      // not on every 401 (which could be a CORS preflight issue)
+      if (error.status === 401 && token) {
         authService.logout();
       }
       return throwError(() => error);

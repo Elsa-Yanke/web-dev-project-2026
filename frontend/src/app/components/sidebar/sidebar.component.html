@@ -1,20 +1,31 @@
 <nav class="sidebar">
   <div class="logo">GameLib</div>
-  
+
   <ul class="nav-links">
     <li>
-      <a routerLink="/catalog" routerLinkActive="active">
-        <span>🎮</span> Catalog
+      <a routerLink="/games" routerLinkActive="active">
+        <span class="icon">🎮</span> Catalog
       </a>
     </li>
-<a routerLink="/library" routerLinkActive="active-link"><span>📚</span>My Library</a>
-
     <li>
-      <a routerLink="/login" routerLinkActive="active">
-        <span>🔑</span> Login
+      <a routerLink="/library" routerLinkActive="active">
+        <span class="icon">🌸</span> My Library
       </a>
     </li>
 
-
+    @if (auth.isLoggedIn()) {
+      <li class="user-section">
+        <span class="username-label">{{ username }}</span>
+        <button class="logout-btn" (click)="logout()">Logout</button>
+      </li>
+    } @else {
+      <li>
+        <a routerLink="/login" routerLinkActive="active">
+          <span class="icon">🔑</span> Login
+        </a>
+      </li>
+    }
   </ul>
+
+  <div class="sidebar-footer">❀ ✿ ❀</div>
 </nav>

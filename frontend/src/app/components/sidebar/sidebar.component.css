@@ -1,47 +1,119 @@
 :host {
   display: block;
-  width: 240px;
+  width: 230px;
+  flex-shrink: 0;
   height: 100vh;
-  background-color: #15151b;
-  border-right: 1px solid #252530;
-  padding: 20px;
+  background: rgba(9, 11, 32, 0.88);
+  border-right: 1px solid rgba(200, 175, 240, 0.1);
+  backdrop-filter: blur(20px);
+  padding: 32px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Moon decoration at top */
+:host::before {
+  content: '';
+  display: block;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, #f9f0c0 0%, #f5d98a 55%, #d4a83a 100%);
+  box-shadow: 0 0 24px 8px rgba(245, 217, 120, 0.28);
+  margin: 0 auto 28px;
+  flex-shrink: 0;
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #6c5ce7;
-  margin-bottom: 40px;
-  padding-left: 10px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  font-style: italic;
+  color: #f7cfe0;
+  text-align: center;
+  letter-spacing: 0.03em;
+  margin-bottom: 36px;
+  flex-shrink: 0;
 }
 
 ul {
   list-style: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 }
 
-li {
-  margin-bottom: 10px;
-}
+li { width: 100%; }
 
 a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
-  color: #a0a0a0;
+  gap: 11px;
+  padding: 11px 15px;
+  color: #8279aa;
   text-decoration: none;
-  border-radius: 8px;
-  transition: 0.3s;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: background 0.22s, color 0.22s;
+}
+
+a span.icon {
+  font-size: 1rem;
+  opacity: 0.75;
 }
 
 a:hover {
-  background-color: #252530;
-  color: #eee;
+  background: rgba(200, 175, 240, 0.08);
+  color: #c3b9e0;
 }
 
-a.active { 
-  background-color: #6c5ce7;
-  color: white;
-  font-weight: bold;
+a.active,
+a.active-link {
+  background: linear-gradient(135deg, rgba(201, 103, 138, 0.25), rgba(184, 169, 232, 0.18));
+  color: #f7cfe0;
+  border: 1px solid rgba(201, 103, 138, 0.3);
+}
+
+.user-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 11px 15px;
+}
+
+.username-label {
+  color: #c3b9e0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.logout-btn {
+  background: rgba(201, 103, 138, 0.2);
+  border: 1px solid rgba(201, 103, 138, 0.35);
+  color: #f7cfe0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(201, 103, 138, 0.4);
+}
+
+/* Sakura petals footer */
+.sidebar-footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: rgba(232, 160, 196, 0.2);
+  padding-top: 20px;
+  flex-shrink: 0;
 }

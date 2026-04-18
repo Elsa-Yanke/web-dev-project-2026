@@ -1,35 +1,36 @@
 <div class="catalog-page">
   <div class="catalog-header">
+    <p class="catalog-eyebrow">✿ Discover</p>
     <h1 class="title">Game Catalog</h1>
   </div>
 
   <div class="genre-selector">
-    @for (genre of genres; track genre) {
-      <button 
-        class="genre-chip" 
-        [class.active]="selectedGenre === genre"
+    @for (genre of genres(); track genre) {
+      <button
+        class="genre-chip"
+        [class.active]="selectedGenre() === genre"
         (click)="setGenre(genre)">
         {{ genre }}
       </button>
     }
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <div class="status-msg">Loading games...</div>
-  } @else if (errorMessage) {
-    <div class="status-msg error">{{ errorMessage }}</div>
+  } @else if (errorMessage()) {
+    <div class="status-msg error">{{ errorMessage() }}</div>
   } @else {
     <div class="game-grid">
-      @for (game of filteredGames; track game.id) {
-        <app-game-card 
-          [game]="game" 
-          (add)="onAddGame($event)" 
+      @for (game of filteredGames(); track game.id) {
+        <app-game-card
+          [game]="game"
+          (add)="onAddGame($event)"
           (remove)="onRemoveGame($event)">
         </app-game-card>
       }
     </div>
     <div class="reviews-section">
-  <app-review></app-review>
-</div>
+      <app-review></app-review>
+    </div>
   }
 </div>

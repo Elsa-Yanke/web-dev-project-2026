@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
@@ -12,37 +12,70 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  loginData = { 
-    username: '',
-    password: '',
-    errorMsg: '', 
-  };
+  mode = signal<'login' | 'register'>('login');
 
-  constructor(
-    private auth: AuthService, 
-    private router: Router
-  ) {}
+  loginUsername = signal('');
+  loginPassword = signal('');
+  loginError = signal('');
+
+  regUsername = signal('');
+  regEmail = signal('');
+  regPassword = signal('');
+  regPassword2 = signal('');
+  regError = signal('');
+  regSuccess = signal('');
+
+  constructor(private auth: AuthService, private router: Router) {}
+
+  switchMode(m: 'login' | 'register') {
+    this.mode.set(m);
+    this.loginError.set('');
+    this.regError.set('');
+    this.regSuccess.set('');
+  }
 
   login(): void {
-    this.loginData.errorMsg = '';
-
-    if (!this.loginData.username || !this.loginData.password) {
-      this.loginData.errorMsg = 'Please enter both username and password.';
+    this.loginError.set('');
+    if (!this.loginUsername() || !this.loginPassword()) {
+      this.loginError.set('Please fill in all fields.');
       return;
     }
-
-    this.auth.login(this.loginData.username, this.loginData.password).subscribe({
-      next: () => {
-        console.log('Login successful!');
-        this.router.navigate(['/catalog']); 
-      },
+    this.auth.login(this.loginUsername(), this.loginPassword()).subscribe({
+      next: () => this.router.navigate(['/games']),
       error: (err) => {
-        console.error(err);
-        if (err.status === 401) {
-          this.loginData.errorMsg = 'Invalid username or password.';
-        } else {
-          this.loginData.errorMsg = 'An error occurred. Is the backend running?';
-        }
+        this.loginError.set(
+          err.status === 401
+            ? 'Invalid username or password.'
+            : 'Error. Is the backend running?'
+        );
+      }
+    });
+  }
+
+  register(): void {
+    this.regError.set('');
+    this.regSuccess.set('');
+    const username = this.regUsername();
+    const email = this.regEmail();
+    const password = this.regPassword();
+    const password2 = this.regPassword2();
+
+    if (!username || !email || !password || !password2) {
+      this.regError.set('Please fill in all fields.');
+      return;
+    }
+    if (password !== password2) {
+      this.regError.set('Passwords do not match.');
+      return;
+    }
+    this.auth.register({ username, email, password, password2 }).subscribe({
+      next: () => this.router.navigate(['/games']),
+      error: (err) => {
+        const data = err.error;
+        if (data?.username) this.regError.set('Username: ' + data.username[0]);
+        else if (data?.email) this.regError.set('Email: ' + data.email[0]);
+        else if (data?.password2) this.regError.set(data.password2[0]);
+        else this.regError.set('Registration failed. Try again.');
       }
     });
   }

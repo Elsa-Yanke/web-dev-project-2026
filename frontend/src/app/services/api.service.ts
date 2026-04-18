@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Game, Review, AuthTokens } from '../models/game.model';
+import { Game, Genre, Review, AuthTokens, LibraryEntry } from '../models/game.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = 'http://127.0.0.1:8000/api'; 
+  private base = 'http://127.0.0.1:8000/api';
 
   constructor(private http: HttpClient) {}
 
-  
+  // ── Auth ──────────────────────────────────────────────
   login(username: string, password: string): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.base}/auth/login/`, { username, password });
   }
@@ -22,6 +22,11 @@ export class ApiService {
     return this.http.post(`${this.base}/auth/logout/`, { refresh });
   }
 
+  getMe(): Observable<any> {
+    return this.http.get(`${this.base}/auth/me/`);
+  }
+
+  // ── Games ─────────────────────────────────────────────
   getGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.base}/games/`);
   }
@@ -30,6 +35,11 @@ export class ApiService {
     return this.http.get<Game>(`${this.base}/games/${id}/`);
   }
 
+  getGenres(): Observable<Genre[]> {
+    return this.http.get<Genre[]>(`${this.base}/genres/`);
+  }
+
+  // ── Reviews ───────────────────────────────────────────
   getReviews(gameId: number): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.base}/games/${gameId}/reviews/`);
   }
@@ -43,9 +53,14 @@ export class ApiService {
     return this.http.delete<void>(`${this.base}/games/${gameId}/reviews/${reviewId}/`);
   }
 
-addToLibrary(gameId: number): Observable<any> {
-  return this.http.post(`${this.base}/user-games/`, { game: gameId });
-}
+  // ── Library ───────────────────────────────────────────
+  getLibrary(): Observable<LibraryEntry[]> {
+    return this.http.get<LibraryEntry[]>(`${this.base}/library/`);
+  }
+
+  addToLibrary(gameId: number, status: string = 'planned'): Observable<any> {
+    return this.http.post(`${this.base}/library/`, { game_id: gameId, status });
+  }
 
   updateGameStatus(id: number, status: string): Observable<any> {
     return this.http.patch(`${this.base}/library/${id}/`, { status });
@@ -54,8 +69,4 @@ addToLibrary(gameId: number): Observable<any> {
   deleteFromLibrary(id: number): Observable<any> {
     return this.http.delete(`${this.base}/library/${id}/`);
   }
-
-  getGenres(): Observable<string[]> {
-  return this.http.get<string[]>(`${this.base}/genres/`);
-}
 }
