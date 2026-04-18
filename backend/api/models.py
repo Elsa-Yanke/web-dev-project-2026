@@ -21,6 +21,8 @@ class Game(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     genre = models.ForeignKey(Genre, on_delete=models.PROTECT, related_name='games')
     ai_summary = models.TextField(blank=True, default='')
+    steam_app_id = models.IntegerField(null=True, blank=True)
+    cover_image = models.CharField(max_length=255, blank=True, default='')
 
     def __str__(self):
         return self.title

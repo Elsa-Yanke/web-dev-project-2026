@@ -5,43 +5,40 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-from .models import Game, Review, UserGame
-from .serializers import GameSerializer, ReviewSerializer, UserGameSerializer
+from .models import Game, Genre, Review, UserGame
+from .serializers import (
+    GameSerializer, GenreSerializer, ReviewSerializer,
+    UserGameReadSerializer, UserGameWriteSerializer,
+)
 
-@api_view(['GET', 'POST'])
+
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def game_list(request):
-    if request.method == 'GET':
-        games = Game.objects.select_related('genre').all()
-        serializer = GameSerializer(games, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = GameSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    games = Game.objects.select_related('genre').all()
+    search = request.query_params.get('search', '').strip()
+    genre = request.query_params.get('genre', '').strip()
+    if search:
+        games = games.filter(title__icontains=search)
+    if genre:
+        games = games.filter(genre__name__iexact=genre)
+    serializer = GameSerializer(games, many=True)
+    return Response(serializer.data)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def game_detail(request, pk):
     game = get_object_or_404(Game, pk=pk)
+    return Response(GameSerializer(game).data)
 
-    if request.method == 'GET':
-        return Response(GameSerializer(game).data)
 
-    elif request.method == 'PUT':
-        serializer = GameSerializer(game, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        game.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def genre_list(request):
+    genres = Genre.objects.all()
+    serializer = GenreSerializer(genres, many=True)
+    return Response(serializer.data)
 
 
 class ReviewListCreateView(APIView):
@@ -78,5 +75,56 @@ class ReviewDetailView(APIView):
 
     def delete(self, request, game_pk, pk):
         review = self.get_object(game_pk, pk)
+        if review.user != request.user:
+            return Response(
+                {'detail': 'You can only delete your own reviews.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class LibraryListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        entries = UserGame.objects.filter(user=request.user).select_related('game__genre')
+        serializer = UserGameReadSerializer(entries, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = UserGameWriteSerializer(data=request.data)
+        if serializer.is_valid():
+            game_id = serializer.validated_data['game_id']
+            if UserGame.objects.filter(user=request.user, game_id=game_id).exists():
+                return Response(
+                    {'detail': 'Game already in library.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LibraryDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, request, pk):
+        return get_object_or_404(UserGame, pk=pk, user=request.user)
+
+    def put(self, request, pk):
+        entry = self.get_object(request, pk)
+        serializer = UserGameWriteSerializer(entry, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        """Accept PATCH for partial updates (e.g. status only)."""
+        return self.put(request, pk)
+
+    def delete(self, request, pk):
+        entry = self.get_object(request, pk)
+        entry.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

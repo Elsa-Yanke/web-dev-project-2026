@@ -34,7 +34,7 @@ class Command(BaseCommand):
         # 1. Fetch game details
         detail_resp = requests.get(
             'https://store.steampowered.com/api/appdetails',
-            params={'appids': app_id, 'l': 'english', 'cc': 'us'},
+            params={'appids': app_id, 'l': 'english', 'cc': 'kz'},
             timeout=15,
         )
         detail_data = detail_resp.json().get(str(app_id), {})
@@ -67,8 +67,12 @@ class Command(BaseCommand):
                 'release_year': release_year,
                 'price': price,
                 'genre': genre,
+                'steam_app_id': app_id,
             }
         )
+        if not created and not game.steam_app_id:
+            game.steam_app_id = app_id
+            game.save(update_fields=['steam_app_id'])
         action = 'Created' if created else 'Found'
         self.stdout.write(f'  {action}: {title}')
 

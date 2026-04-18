@@ -20,7 +20,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['id', 'title', 'description', 'release_year', 'price', 'genre', 'genre_id', 'ai_summary']
+        fields = ['id', 'title', 'description', 'release_year', 'price', 'genre', 'genre_id', 'ai_summary', 'steam_app_id', 'cover_image']
         read_only_fields = ['ai_summary']
 
 
@@ -30,7 +30,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['id', 'game', 'user', 'text', 'is_positive', 'created_at']
-        read_only_fields = ['user', 'created_at']
+        read_only_fields = ['game', 'user', 'created_at']
+
 
 class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
@@ -39,6 +40,7 @@ class RegisterSerializer(serializers.Serializer):
     password2 = serializers.CharField(write_only=True)
     bio = serializers.CharField(required=False, allow_blank=True)
     avatar = serializers.ImageField(required=False, allow_null=True)
+
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError('Username already taken.')
@@ -48,6 +50,7 @@ class RegisterSerializer(serializers.Serializer):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError('Email already registered.')
         return value
+
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError({'password2': 'Passwords do not match.'})
@@ -62,11 +65,13 @@ class RegisterSerializer(serializers.Serializer):
         return user
 
 
-class UserGameSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
+class UserGameWriteSerializer(serializers.Serializer):
+    """Used for POST (add to library)."""
     game_id = serializers.IntegerField()
-    status = serializers.ChoiceField(choices=['playing', 'finished', 'planned', 'dropped'])
-    added_at = serializers.DateTimeField(read_only=True)
+    status = serializers.ChoiceField(
+        choices=['playing', 'finished', 'planned', 'dropped'],
+        default='planned',
+    )
 
     def validate_game_id(self, value):
         if not Game.objects.filter(id=value).exists():
@@ -75,3 +80,17 @@ class UserGameSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return UserGame.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        instance.save(update_fields=['status'])
+        return instance
+
+
+class UserGameReadSerializer(serializers.ModelSerializer):
+    """Used for GET — returns full game details inside each library entry."""
+    game = GameSerializer(read_only=True)
+
+    class Meta:
+        model = UserGame
+        fields = ['id', 'game', 'status', 'added_at']
