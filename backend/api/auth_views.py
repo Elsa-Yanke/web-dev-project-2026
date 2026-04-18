@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, ProfileSerializer
 
 
 @api_view(['POST'])
@@ -22,14 +22,17 @@ def register_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def me_view(request):
-    """Return current user info based on the JWT token."""
     user = request.user
-    return Response({
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-        'bio': user.bio,
-    })
+    if request.method == 'GET':
+        serializer = ProfileSerializer(user, context={'request': request})
+        return Response(serializer.data)
+
+    # PATCH — update bio and/or avatar
+    serializer = ProfileSerializer(user, data=request.data, partial=True, context={'request': request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

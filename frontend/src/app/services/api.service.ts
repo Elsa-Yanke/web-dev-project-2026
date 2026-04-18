@@ -26,6 +26,10 @@ export class ApiService {
     return this.http.get(`${this.base}/auth/me/`);
   }
 
+  updateProfile(formData: FormData): Observable<any> {
+    return this.http.patch(`${this.base}/auth/me/`, formData);
+  }
+
   // ── Games ─────────────────────────────────────────────
   getGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.base}/games/`);
@@ -62,8 +66,8 @@ export class ApiService {
     return this.http.post(`${this.base}/library/`, { game_id: gameId, status });
   }
 
-  updateGameStatus(id: number, status: string): Observable<any> {
-    return this.http.patch(`${this.base}/library/${id}/`, { status });
+  updateLibraryEntry(id: number, data: { status?: string; is_favorite?: boolean; note?: string }): Observable<any> {
+    return this.http.patch(`${this.base}/library/${id}/`, data);
   }
 
   deleteFromLibrary(id: number): Observable<any> {

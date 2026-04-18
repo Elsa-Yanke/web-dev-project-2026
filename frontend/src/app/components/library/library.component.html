@@ -1,54 +1,60 @@
 <div class="page">
   <div class="hdr">
     <div>
-      <p class="eyebrow">✿ My Profile</p>
+      <p class="eyebrow">My Profile</p>
       <h1 class="ptitle">Library</h1>
     </div>
   </div>
 
   <nav class="tabs">
     <button class="tab" [class.active]="selectedStatus() === 'all'" (click)="setFilter('all')">
-      ◈ All <span class="tc">{{ entries().length }}</span>
+      All <span class="tc">{{ entries().length }}</span>
     </button>
     <button class="tab" [class.active]="selectedStatus() === 'playing'" (click)="setFilter('playing')">
-      ▶ Playing <span class="tc">{{ countPlaying() }}</span>
+      Playing <span class="tc">{{ countPlaying() }}</span>
     </button>
     <button class="tab" [class.active]="selectedStatus() === 'planned'" (click)="setFilter('planned')">
-      ◷ Planned <span class="tc">{{ countPlanned() }}</span>
+      Planned <span class="tc">{{ countPlanned() }}</span>
     </button>
     <button class="tab" [class.active]="selectedStatus() === 'finished'" (click)="setFilter('finished')">
-      ✓ Finished <span class="tc">{{ countCompleted() }}</span>
+      Finished <span class="tc">{{ countCompleted() }}</span>
     </button>
   </nav>
 
   <div class="game-grid">
     @for (entry of filteredEntries(); track entry.id) {
-      <div class="card">
-        <div class="status-stripe" [attr.data-status]="entry.status"></div>
+      <div class="card" [attr.data-status]="entry.status">
+        <!-- Cover image -->
+        <a [routerLink]="['/games', entry.game.id]" class="card-thumb-link">
+          <div class="card-thumb">
+            @if (coverSrc(entry)) {
+              <img [src]="coverSrc(entry)" (error)="onImgError($event)" class="card-img" [alt]="entry.game.title">
+            }
+            <div class="status-ribbon" [attr.data-status]="entry.status">{{ entry.status }}</div>
+          </div>
+        </a>
 
         <div class="cbody">
           <div class="ctop">
             <span class="gbadge">{{ entry.game.genre?.name }}</span>
-            <span class="sbadge" [attr.data-status]="entry.status">
-              {{ entry.status | uppercase }}
-            </span>
           </div>
-          <h2 class="ctitle">{{ entry.game.title }}</h2>
+          <a [routerLink]="['/games', entry.game.id]" class="ctitle-link">
+            <h2 class="ctitle">{{ entry.game.title }}</h2>
+          </a>
           <div class="cmeta">
             <span class="cyear">{{ entry.game.release_year }}</span>
-            <span class="cprice">{{ entry.game.price }} ₸</span>
+            <span class="cprice">{{ +entry.game.price === 0 ? 'Free' : entry.game.price + ' ₸' }}</span>
           </div>
         </div>
 
         <div class="cactions">
-          <a class="abtn" [routerLink]="['/games', entry.game.id]">Details</a>
           <select class="sselect" [value]="entry.status" (change)="updateStatus(entry, $any($event.target).value)">
             <option value="playing">Playing</option>
             <option value="planned">Planned</option>
             <option value="finished">Finished</option>
             <option value="dropped">Dropped</option>
           </select>
-          <button class="abtn rbtn" (click)="removeGame(entry.id)">Remove🗑</button>
+          <button class="abtn rbtn" (click)="removeGame(entry.id)">Remove</button>
         </div>
       </div>
     }

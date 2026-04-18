@@ -51,5 +51,7 @@ export interface LibraryEntry {
   id: number;
   game: Game;
   status: string;
+  is_favorite: boolean;
+  note: string;
   added_at: string;
 }

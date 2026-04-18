@@ -66,12 +66,14 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class UserGameWriteSerializer(serializers.Serializer):
-    """Used for POST (add to library)."""
-    game_id = serializers.IntegerField()
+    """Used for POST (add to library) and PATCH (update status/note/favorite)."""
+    game_id = serializers.IntegerField(required=False)
     status = serializers.ChoiceField(
         choices=['playing', 'finished', 'planned', 'dropped'],
-        default='planned',
+        required=False,
     )
+    is_favorite = serializers.BooleanField(required=False)
+    note = serializers.CharField(required=False, allow_blank=True)
 
     def validate_game_id(self, value):
         if not Game.objects.filter(id=value).exists():
@@ -82,8 +84,10 @@ class UserGameWriteSerializer(serializers.Serializer):
         return UserGame.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.status = validated_data.get('status', instance.status)
-        instance.save(update_fields=['status'])
+        for field in ('status', 'is_favorite', 'note'):
+            if field in validated_data:
+                setattr(instance, field, validated_data[field])
+        instance.save()
         return instance
 
 
@@ -93,4 +97,20 @@ class UserGameReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserGame
-        fields = ['id', 'game', 'status', 'added_at']
+        fields = ['id', 'game', 'status', 'is_favorite', 'note', 'added_at']
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    avatar_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'bio', 'avatar', 'avatar_url']
+        read_only_fields = ['id', 'username', 'email']
+        extra_kwargs = {'avatar': {'write_only': True, 'required': False}}
+
+    def get_avatar_url(self, obj):
+        request = self.context.get('request')
+        if obj.avatar and request:
+            return request.build_absolute_uri(obj.avatar.url)
+        return None

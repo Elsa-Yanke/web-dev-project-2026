@@ -17,18 +17,8 @@ export class GameCardComponent {
   @Output() add = new EventEmitter<{ gameId: number; status: string }>();
   @Output() remove = new EventEmitter<number>();
 
-  showStatusPicker = signal(false);
-
-  toggleStatusPicker(): void {
-    this.showStatusPicker.set(true);
-  }
-
-  onStatusSelect(event: Event): void {
-    const status = (event.target as HTMLSelectElement).value;
-    if (status) {
-      this.add.emit({ gameId: this.game.id, status });
-      this.showStatusPicker.set(false);
-    }
+  onAdd(): void {
+    this.add.emit({ gameId: this.game.id, status: 'planned' });
   }
 
   onRemove(): void {

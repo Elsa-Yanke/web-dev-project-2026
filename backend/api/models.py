@@ -60,6 +60,8 @@ class UserGame(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_games')
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='user_games')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    is_favorite = models.BooleanField(default=False)
+    note = models.TextField(blank=True, default='')
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

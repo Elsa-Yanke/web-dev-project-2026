@@ -25,17 +25,7 @@
         @if (inLibrary) {
           <button class="btn-action btn-remove" (click)="onRemove()">Remove</button>
         } @else {
-          @if (showStatusPicker()) {
-            <select class="status-select" (change)="onStatusSelect($event)">
-              <option value="" disabled selected>Status...</option>
-              <option value="playing">Playing</option>
-              <option value="planned">Planned</option>
-              <option value="finished">Finished</option>
-              <option value="dropped">Dropped</option>
-            </select>
-          } @else {
-            <button class="btn-action btn-add" (click)="toggleStatusPicker()">+ Add</button>
-          }
+          <button class="btn-action btn-add" (click)="onAdd()">+ Add</button>
         }
       </div>
     </div>

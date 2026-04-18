@@ -44,8 +44,10 @@ export class LibraryComponent implements OnInit {
   }
 
   updateStatus(entry: LibraryEntry, newStatus: string): void {
-    entry.status = newStatus;
-    this.api.updateGameStatus(entry.id, newStatus).subscribe();
+    this.api.updateLibraryEntry(entry.id, { status: newStatus }).subscribe();
+    this.entries.update(list =>
+      list.map(e => e.id === entry.id ? { ...e, status: newStatus } : e)
+    );
   }
 
   removeGame(id: number): void {
@@ -54,5 +56,13 @@ export class LibraryComponent implements OnInit {
         next: () => this.entries.update(list => list.filter(e => e.id !== id))
       });
     }
+  }
+
+  coverSrc(entry: LibraryEntry): string {
+    return entry.game.cover_image ? `covers/${entry.game.cover_image}` : '';
+  }
+
+  onImgError(event: Event): void {
+    (event.target as HTMLImageElement).style.display = 'none';
   }
 }

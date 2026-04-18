@@ -1,31 +1,72 @@
 <nav class="sidebar">
-  <div class="logo">GameLib</div>
 
+  <!-- Profile block -->
+  @if (auth.isLoggedIn()) {
+    <a routerLink="/profile" class="profile-block">
+      <div class="avatar-ring">
+        @if (profileService.avatarUrl()) {
+          <img [src]="profileService.avatarUrl()" class="avatar-img" alt="avatar">
+        } @else {
+          <span class="avatar-initials">{{ username[0]?.toUpperCase() }}</span>
+        }
+      </div>
+      <div class="profile-info">
+        <span class="profile-name">{{ username }}</span>
+        <span class="profile-hint">View profile</span>
+      </div>
+    </a>
+  } @else {
+    <div class="logo-block">
+      <div class="moon"></div>
+      <div class="logo">GameLib</div>
+    </div>
+  }
+
+  <div class="divider"></div>
+
+  <!-- Main nav -->
   <ul class="nav-links">
     <li>
-      <a routerLink="/games" routerLinkActive="active">
-        <span class="icon">🎮</span> Catalog
+      <a routerLink="/games" routerLinkActive="active" class="nav-big">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="9" height="9" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="13" y="2" width="9" height="9" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="2" y="13" width="9" height="9" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="13" y="13" width="9" height="9" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <span>Catalog</span>
       </a>
     </li>
     <li>
-      <a routerLink="/library" routerLinkActive="active">
-        <span class="icon">🌸</span> My Library
+      <a routerLink="/library" routerLinkActive="active" class="nav-big">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 3h11a2 2 0 0 1 2 2v15l-4-2.5L10 20V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>My Library</span>
       </a>
     </li>
-
-    @if (auth.isLoggedIn()) {
-      <li class="user-section">
-        <span class="username-label">{{ username }}</span>
-        <button class="logout-btn" (click)="logout()">Logout</button>
-      </li>
-    } @else {
-      <li>
-        <a routerLink="/login" routerLinkActive="active">
-          <span class="icon">🔑</span> Login
-        </a>
-      </li>
-    }
   </ul>
 
-  <div class="sidebar-footer">❀ ✿ ❀</div>
+  <div class="sidebar-bottom">
+    @if (auth.isLoggedIn()) {
+      <button class="logout-btn" (click)="logout()">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3M8 14l4-4-4-4M12 10H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Sign out
+      </button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active" class="login-btn">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="6.5" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M2 18c0-4 3.6-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Login
+      </a>
+    }
+    <div class="footer-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
 </nav>

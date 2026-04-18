@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ProfileService } from '../../services/profile.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,7 +12,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, public profileService: ProfileService) {}
 
   get username(): string {
     return this.auth.getUsername() || 'User';

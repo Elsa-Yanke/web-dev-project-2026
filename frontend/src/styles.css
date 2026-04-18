@@ -27,8 +27,8 @@
 
 html, body {
   height: 100%;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 16px;
   color: var(--text-bright);
   background-color: var(--sky-deep);
   overflow: hidden;
@@ -60,25 +60,18 @@ html, body {
   position: relative;
 }
 
-/* Subtle sakura petals in the background via pseudo-element */
-.main-content::before {
-  content: '❀ ✿ ❀ ✿ ❀';
-  position: fixed;
-  top: 12px;
-  right: 48px;
-  font-size: 11px;
-  letter-spacing: 8px;
-  color: rgba(232, 160, 196, 0.18);
-  pointer-events: none;
-  user-select: none;
-}
 
 /* ─── Typography helpers ─────────────────────────────────── */
 h1, h2, h3 {
   font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-bright);
   line-height: 1.25;
+}
+
+/* Override body font for buttons/inputs globally */
+button, input, textarea, select {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 
 /* ─── Shared card ────────────────────────────────────────── */
@@ -101,7 +94,7 @@ h1, h2, h3 {
   border: none;
   border-radius: 10px;
   padding: 9px 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -116,7 +109,7 @@ h1, h2, h3 {
   border: 1px solid var(--card-border);
   border-radius: 10px;
   padding: 9px 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.82rem;
   font-weight: 500;
   cursor: pointer;
