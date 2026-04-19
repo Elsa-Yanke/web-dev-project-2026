@@ -9,6 +9,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  // ── Auth ──────────────────────────────────────────────
   login(username: string, password: string): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.base}/auth/login/`, { username, password });
   }
@@ -29,6 +30,7 @@ export class ApiService {
     return this.http.patch(`${this.base}/auth/me/`, formData);
   }
 
+  // ── Games ─────────────────────────────────────────────
   getGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.base}/games/`);
   }
@@ -41,6 +43,7 @@ export class ApiService {
     return this.http.get<Genre[]>(`${this.base}/genres/`);
   }
 
+  // ── Reviews ───────────────────────────────────────────
   getReviews(gameId: number): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.base}/games/${gameId}/reviews/`);
   }
@@ -50,10 +53,16 @@ export class ApiService {
     return this.http.post<Review>(`${this.base}/games/${gameId}/reviews/`, payload);
   }
 
+  updateReview(gameId: number, reviewId: number, text: string, isPositive: boolean): Observable<Review> {
+    const payload = { text, is_positive: isPositive };
+    return this.http.patch<Review>(`${this.base}/games/${gameId}/reviews/${reviewId}/`, payload);
+  }
+
   deleteReview(gameId: number, reviewId: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/games/${gameId}/reviews/${reviewId}/`);
   }
 
+  // ── Library ───────────────────────────────────────────
   getLibrary(): Observable<LibraryEntry[]> {
     return this.http.get<LibraryEntry[]>(`${this.base}/library/`);
   }
