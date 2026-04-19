@@ -30,7 +30,6 @@ def me_view(request):
         serializer = ProfileSerializer(user, context={'request': request})
         return Response(serializer.data)
 
-    # PATCH — update bio and/or avatar
     serializer = ProfileSerializer(user, data=request.data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()

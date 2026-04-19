@@ -1,6 +1,5 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Generic words that appear in almost every game review and carry no meaning
 GAMING_STOP_WORDS = {
     'game', 'games', 'play', 'playing', 'played', 'player', 'players',
     'just', 'like', 'good', 'great', 'fun', 'really', 'make', 'makes',
@@ -13,7 +12,6 @@ GAMING_STOP_WORDS = {
     'buy', 'bought', 'refund', 'recommend', 'worth', 'price',
     'op', 'ok', 'lol', 'yes', 'no',
 }
-
 
 def generate_summary(positive: list, negative: list) -> str:
     def top_phrases(texts, n=5):

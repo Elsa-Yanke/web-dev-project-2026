@@ -1,10 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
 from .models import Game, Genre, Review, UserGame
 
 User = get_user_model()
-
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,8 +13,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class GameSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(read_only=True)
     genre_id = serializers.PrimaryKeyRelatedField(
-        queryset=Genre.objects.all(), source='genre', write_only=True
-    )
+        queryset=Genre.objects.all(), source='genre', write_only=True)
 
     class Meta:
         model = Game
@@ -66,7 +63,6 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class UserGameWriteSerializer(serializers.Serializer):
-    """Used for POST (add to library) and PATCH (update status/note/favorite)."""
     game_id = serializers.IntegerField(required=False)
     status = serializers.ChoiceField(
         choices=['playing', 'finished', 'planned', 'dropped'],
@@ -92,7 +88,6 @@ class UserGameWriteSerializer(serializers.Serializer):
 
 
 class UserGameReadSerializer(serializers.ModelSerializer):
-    """Used for GET — returns full game details inside each library entry."""
     game = GameSerializer(read_only=True)
 
     class Meta:
