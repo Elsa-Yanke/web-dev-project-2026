@@ -4,6 +4,24 @@
     <h1 class="title">Game Catalog</h1>
   </div>
 
+  <div class="search-bar">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search games..."
+        [value]="searchQuery()"
+        (input)="setSearch($any($event.target).value)">
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="setSearch('')">✕</button>
+      }
+    </div>
+  </div>
+
   <div class="genre-selector">
     @for (genre of genres(); track genre) {
       <button
@@ -20,15 +38,19 @@
   } @else if (errorMessage()) {
     <div class="status-msg error">{{ errorMessage() }}</div>
   } @else {
-    <div class="game-grid">
-      @for (game of filteredGames(); track game.id) {
-        <app-game-card
-          [game]="game"
-          (add)="onAddGame($event)"
-          (remove)="onRemoveGame($event)">
-        </app-game-card>
-      }
-    </div>
+    @if (filteredGames().length === 0) {
+      <div class="status-msg">No games found for "{{ searchQuery() }}"</div>
+    } @else {
+      <div class="game-grid">
+        @for (game of filteredGames(); track game.id) {
+          <app-game-card
+            [game]="game"
+            (add)="onAddGame($event)"
+            (remove)="onRemoveGame($event)">
+          </app-game-card>
+        }
+      </div>
+    }
     <div class="reviews-section">
       <app-review></app-review>
     </div>

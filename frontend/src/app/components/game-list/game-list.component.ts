@@ -16,13 +16,17 @@ export class GameListComponent implements OnInit {
   games = signal<Game[]>([]);
   genres = signal<string[]>(['All']);
   selectedGenre = signal<string>('All');
+  searchQuery = signal<string>('');
   loading = signal(true);
   errorMessage = signal('');
 
   filteredGames = computed(() => {
     const genre = this.selectedGenre();
-    if (genre === 'All') return this.games();
-    return this.games().filter(g => g.genre?.name === genre);
+    const query = this.searchQuery().toLowerCase().trim();
+    let list = this.games();
+    if (genre !== 'All') list = list.filter(g => g.genre?.name === genre);
+    if (query) list = list.filter(g => g.title.toLowerCase().includes(query));
+    return list;
   });
 
   constructor(private api: ApiService) {}
@@ -50,6 +54,10 @@ export class GameListComponent implements OnInit {
 
   setGenre(genre: string): void {
     this.selectedGenre.set(genre);
+  }
+
+  setSearch(query: string): void {
+    this.searchQuery.set(query);
   }
 
   onAddGame(event: { gameId: number; status: string }): void {
