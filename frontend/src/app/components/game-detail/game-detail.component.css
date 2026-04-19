@@ -4,6 +4,7 @@
   padding: 0 0 80px;
 }
 
+/* ── HERO BANNER ──────────────────────────────────────────── */
 .hero-banner {
   position: relative;
   border-radius: 24px;
@@ -152,6 +153,7 @@
   border-color: rgba(160, 232, 120, 0.25);
 }
 
+/* ── MAIN GRID ────────────────────────────────────────────── */
 .content-grid {
   display: grid;
   grid-template-columns: 1.55fr 1fr;
@@ -159,6 +161,7 @@
   align-items: start;
 }
 
+/* ── SHARED CARD ──────────────────────────────────────────── */
 .card {
   background: rgba(14, 16, 46, 0.82);
   border: 1px solid rgba(200, 175, 240, 0.1);
@@ -176,6 +179,7 @@
   letter-spacing: 0.02em;
 }
 
+/* ── NOTE CARD ────────────────────────────────────────────── */
 .note-card {
   border-color: rgba(184, 169, 232, 0.18);
   background: rgba(10, 12, 36, 0.7);
@@ -269,12 +273,14 @@
 
 .cancel-btn:hover { color: #c3b9e0; }
 
+/* ── ABOUT CARD ───────────────────────────────────────────── */
 .about-card p {
   color: #a09ac8;
   line-height: 1.85;
   font-size: 0.92rem;
 }
 
+/* ── AI SUMMARY CARD ──────────────────────────────────────── */
 .ai-card {
   background: linear-gradient(140deg, rgba(18, 10, 44, 0.9), rgba(36, 14, 56, 0.9));
   border-color: rgba(201, 103, 138, 0.22);
@@ -343,6 +349,7 @@
   border-left: 2px solid rgba(201, 103, 138, 0.4);
 }
 
+/* ── REVIEW FORM ──────────────────────────────────────────── */
 .review-form textarea {
   width: 100%;
   min-height: 110px;
@@ -412,6 +419,7 @@
 
 .btn:hover { opacity: 0.88; transform: translateY(-1px); }
 
+/* ── REVIEWS LIST ─────────────────────────────────────────── */
 .reviews-list h3 {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.05rem;
@@ -521,6 +529,84 @@
   font-size: 0.72rem;
 }
 
+/* ── REVIEW EDIT / DELETE ─────────────────────────────────── */
+.rev-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rev-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.review-item:hover .rev-actions {
+  opacity: 1;
+}
+
+.rev-action-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 3px 7px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  line-height: 1;
+}
+
+.edit-btn:hover {
+  background: rgba(184, 169, 232, 0.12);
+  border-color: rgba(184, 169, 232, 0.3);
+}
+
+.delete-btn:hover {
+  background: rgba(212, 122, 122, 0.12);
+  border-color: rgba(212, 122, 122, 0.3);
+}
+
+.rev-edit-form {
+  margin-top: 10px;
+}
+
+.rev-edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  background: rgba(9, 11, 30, 0.7);
+  border: 1px solid rgba(184, 169, 232, 0.2);
+  color: #f0edf8;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  margin-bottom: 10px;
+}
+
+.rev-edit-textarea:focus {
+  border-color: rgba(184, 169, 232, 0.4);
+}
+
+.rev-edit-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.rev-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── LOADER ───────────────────────────────────────────────── */
 .loader {
   display: flex;
   flex-direction: column;

@@ -21,6 +21,10 @@ export class GameDetailComponent implements OnInit {
   reviewText = signal('');
   isPositive = signal(true);
 
+  editingReviewId = signal<number | null>(null);
+  editText = signal('');
+  editIsPositive = signal(true);
+
   noteText = signal('');
   noteEditing = signal(false);
   noteSaving = signal(false);
@@ -55,6 +59,7 @@ export class GameDetailComponent implements OnInit {
     return game.cover_image ? `covers/${game.cover_image}` : '';
   }
 
+  // ── Favorite ──────────────────────────────────────────────
   toggleFavorite(): void {
     const entry = this.libraryEntry();
     if (!entry) return;
@@ -64,6 +69,7 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // ── Note ──────────────────────────────────────────────────
   saveNote(): void {
     const entry = this.libraryEntry();
     if (!entry) return;
@@ -78,6 +84,42 @@ export class GameDetailComponent implements OnInit {
   cancelNote(): void {
     this.noteEditing.set(false);
     this.noteText.set(this.libraryEntry()?.note || '');
+  }
+
+  // ── Review ────────────────────────────────────────────────
+  startEdit(rev: Review): void {
+    this.editingReviewId.set(rev.id);
+    this.editText.set(rev.text);
+    this.editIsPositive.set(rev.is_positive);
+  }
+
+  cancelEdit(): void {
+    this.editingReviewId.set(null);
+  }
+
+  saveEdit(): void {
+    const g = this.game();
+    const revId = this.editingReviewId();
+    if (!g || !revId || !this.editText().trim()) return;
+    this.api.updateReview(g.id, revId, this.editText(), this.editIsPositive()).subscribe({
+      next: (updated) => {
+        this.reviews.update(list => list.map(r => r.id === revId ? updated : r));
+        this.editingReviewId.set(null);
+      },
+      error: () => alert('Failed to update review.')
+    });
+  }
+
+  deleteReview(reviewId: number): void {
+    const g = this.game();
+    if (!g) return;
+    if (!confirm('Delete this review?')) return;
+    this.api.deleteReview(g.id, reviewId).subscribe({
+      next: () => {
+        this.reviews.update(list => list.filter(r => r.id !== reviewId));
+      },
+      error: () => alert('Failed to delete review.')
+    });
   }
 
   sendReview(): void {
