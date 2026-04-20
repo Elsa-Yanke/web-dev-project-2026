@@ -48,11 +48,13 @@ class ReviewListCreateView(APIView):
         return [AllowAny()]
 
     def get(self, request, game_pk):
+        get_object_or_404(Game, pk=game_pk)
         reviews = Review.objects.filter(game_id=game_pk).select_related('user')
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 
     def post(self, request, game_pk):
+        get_object_or_404(Game, pk=game_pk)
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, game_id=game_pk)
